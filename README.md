@@ -2,7 +2,7 @@
 
 A solver for **Root Cause Analysis**, the Entelect Hack&lt;IT&gt; 2026 optimisation
 challenge. You are given a grid, 31 plant species with interlocking growth rules,
-a hidden simulation engine, and a scoring function — and you must emit a static
+a hidden simulation engine, and a scoring function, and you must emit a static
 list of planting actions that produces the most diverse, densest possible garden
 on one specific final tick.
 
@@ -74,7 +74,7 @@ Everything is deterministic: the same input always produces the same
 
 ## What actually mattered
 
-The interesting part of this problem was not the search — it was that **the
+The interesting part of this problem was not the search, it was that **the
 specification is wrong in places, and the only way to find out is to submit and
 read the engine's own logs.** Three corrections, each found by replaying a
 submitted plan against the returned evaluation log:
