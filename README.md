@@ -122,17 +122,4 @@ caps — because those rule out whole branches of the search space.
 
 ---
 
-## Honest limitations
 
-- **The simulator does not predict composition.** It models density and legality
-  well (it reproduced one Level 3 score to within 2.4%), but it predicts a Grass
-  monoculture where the real engine produced six balanced species. Late-stage
-  decisions were therefore reasoned from the returned evaluation logs, not from
-  the simulator.
-- Several engine behaviours remain unresolved: the exact CrossHatch geometry,
-  whether nutrient drain starts at planting or at maturity, and whether an unlock
-  latches permanently once satisfied. See `docs/mechanics.txt` §7.
-- A data inconsistency in the provided datasets caps the reachable species at 30
-  of 31: `animals.json` requires the group `"Shallow-root Species"` while
-  `classifications.json` defines `"Shallowroot Species"`, so the Rhizorends
-  animal — and Bloodbloom, which is gated solely on it — may be unreachable.
