@@ -1,0 +1,145 @@
+================================================================================
+ MECHANICS.TXT  --  how the simulation works, and what we are unsure about
+================================================================================
+
+--------------------------------------------------------------------------------
+1. THE NUTRIENT CLOCK  (the single most important mechanic)
+--------------------------------------------------------------------------------
+  - Every cell starts with 100 nutrient points.
+  - While a plant occupies a cell: -1 point per tick.
+  - At 0 points the cell is uninhabitable, THE PLANT DIES, and the cell is left
+    flagged as DEAD MATTER.
+  - A cell with dead matter REGAINS +1 point per tick, capped at 100.
+  - If a plant moves into a cell that has dead matter, that cell drains at only
+    0.5 points per tick instead of 1.
+
+  IMPLICATIONS:
+  a) Maximum natural lifespan is ~100 ticks (or ~200 on a dead-matter cell that
+     was allowed to refill, because of the halved drain).
+  b) On a 500-tick level, a plant placed at tick 0 is long dead by scoring time.
+     ONLY the last ~100-200 ticks of activity produce the scored final state.
+  c) The garden is therefore a CHURNING system: colonise -> exhaust -> die ->
+     regenerate -> recolonise. Steady-state occupancy will be well under 100%.
+  d) Counter-measures that matter:
+       Crystal Cactus     special: soil_nutrient_regeneration
+       Whiteveil Mycelium special: nutrient_transfer_network (evens out nutrient
+                          points across connected cells)
+       Loamcrawlers animal: soil regen x1.05
+       Grazeleths   animal: soil regen x1.15   <- the strongest one
+     Keeping Grazeleths alive is worth real effort on L2/L3/L4.
+
+  OPEN QUESTION: does the drain start at planting, or only at maturity? The
+  spec says a plant "can only begin competing for nutrient capacity in a cell
+  once it has matured", which hints drain may start at maturity. Worldtree
+  (maturity 25) and Oak (20) would benefit a lot if so. UNRESOLVED - test.
+
+--------------------------------------------------------------------------------
+2. GROWTH AND SPREAD
+--------------------------------------------------------------------------------
+  time_to_maturity : ticks before the plant becomes "active". Before that it
+                     does NOT spread, does NOT cast shade, does NOT trigger
+                     area effects.
+  spread_rate      : ticks between spread actions. LOWER = faster.
+                     Fastest in the game: Crimson Vine, Razorgrass, Skyvine (1).
+  spread_range     : radius of the pattern.
+  spread_type      : VonNeumann (4-dir) / Moore (8-dir) / Row (horizontal line)
+                     / Column (vertical line) / CrossHatch (multi-axis).
+  preferred_soil   : the plant can only be PLACED ON or SPREAD INTO these soils.
+
+  COMPETITION RESOLUTION (the spec is explicit, and slightly counter-intuitive):
+  when two plants spread into the same cell, THE ONE THAT ARRIVES LAST WINS -
+  neither is mature yet, so invasiveness_rank does NOT decide it. Rank only
+  decides contests between established/mature plants.
+  Exception noted in the spec: Ashroot Bramble (burnt soil only).
+
+  MANUAL PLANTING always overwrites whatever is in the cell.
+
+--------------------------------------------------------------------------------
+3. SHADE
+--------------------------------------------------------------------------------
+  Casters (only once MATURE):
+    Oak Tree           shade_radius 4   (maturity 20)  - huge footprint
+    Purple Canopy Tree shade_radius 2   (maturity 15)
+  Hurt by shade:
+    Grass            no_shade_survival  - DIES in shade
+    Dwarf Sunflower  no_shade_spread + adjacent_shade_penalty
+  Require shade to live:
+    Moonpetal Lily   shade_required
+    Ghost Orchid     shade_required
+  Overrides: can_grow_in_shade (no plant in this dataset actually has it).
+
+  => Oak and Purple Canopy are BOTH weapons and hazards. A mature Oak sterilises
+     a radius-4 disc for Grass. But Moonpetal Lily and Ghost Orchid CANNOT EXIST
+     without that shade, and Ghost Orchid gates Starcap Colony.
+  => Correct play: deliberate shade zones. Put the canopy trees together, grow
+     Moonpetal / Ghost Orchid underneath them, keep Grass and Sunflower clear.
+
+--------------------------------------------------------------------------------
+4. SEASONS
+--------------------------------------------------------------------------------
+  Purely deterministic, set by the level file. Only used to trigger rules.
+    no_winter_spread : Rose Bush, Lavender  (cannot spread during winter)
+    season_summer    : Orange Blossom gets spread_rate 4 (worse than its base 3)
+  L3 and L4 END IN WINTER (tick 700+). See levels.txt.
+
+--------------------------------------------------------------------------------
+5. WORLD EVENTS
+--------------------------------------------------------------------------------
+  Rain, Drought, Ash Eclipse, Earthquake. Scheduled in the level file. They are
+  checked with "has transpired AT LEAST ONCE", so once the tick passes, the
+  unlock stays satisfied forever. We never have to time anything to an event -
+  we only have to wait for it.
+    Drought     -> unlocks Crystal Cactus (with Grass coverage > 0.04)
+    Rain        -> unlocks Mire Bloom     (with Blue Moss coverage > 0.05)
+    Ash Eclipse -> unlocks Phoenix Bloom  (with Emberroot + Ashroot coverage)
+    Earthquake  -> creates cracks. Only Skyvine (crack_spread) can cross them.
+                   L4 only, at tick 700.
+
+--------------------------------------------------------------------------------
+6. SPECIAL RULES THAT CHANGE STRATEGY
+--------------------------------------------------------------------------------
+  subsurface_growth (Whiteveil)     : coexists on a cell UNDER the main plant,
+                                      and is PROMOTED to main plant when that
+                                      plant dies. Free insurance against the
+                                      nutrient clock - a Whiteveil carpet under
+                                      everything means dying cells stay
+                                      populated instead of going empty.
+  coexist_all_species (Starcap)     : can share a cell with anything. The ONLY
+                                      way to exceed one plant per cell. Good for
+                                      both C and for diversity.
+  resurrect_after_destruction       : Phoenix Bloom returns after removal.
+  no_adjacent_plants (Living Topiary): will NOT spread into a cell that has any
+                                      adjacent plant. Needs isolated open space -
+                                      put it in a sparse region, or hand-place it
+                                      on a checkerboard.
+  die_if_isolated (Crimson Vine)    : must always have a neighbour. Plant in
+                                      pairs or lines, never as singletons.
+  die_if_neighbors_greater_than 4
+  (Blue Moss)                       : dies if it has more than 4 neighbours. Do
+                                      not let it get surrounded - keep Blue Moss
+                                      in strips, not solid blobs.
+  burnt_soil_radius 2 (Emberroot)   : converts surrounding soil to BURNT, which
+                                      kills off nearly everything else. This is
+                                      how we farm the 20 burnt cells that Ashroot
+                                      needs - but it MUST be quarantined in a
+                                      corner or it will eat the map.
+  dead_matter_only_spread (Glowcap) : Glowcap spreads ONLY onto dead matter, so
+                                      it needs us to kill things first. It
+                                      thrives in the exhausted churning regions.
+  Also: neighbor_spread_slowdown (Thornheart), adjacent_maturity_penalty
+  (Glowcap, Bloodbloom), adjacent_maturity_boost (Blue Moss +1, Sunshard +2).
+
+--------------------------------------------------------------------------------
+7. OPEN QUESTIONS - things we cannot settle from the spec alone
+--------------------------------------------------------------------------------
+  Q1 Does nutrient drain start at planting, or at maturity?
+  Q2 Is "coverage" divided by TOTAL cells or by PLANTABLE cells? The spec says
+     "total available cell coverage", and the worked example uses total cells.
+     MITIGATION: always overshoot every coverage gate so both readings pass.
+  Q3 Does the scored lifespan reset when a subsurface plant is promoted?
+  Q4 Exact CrossHatch geometry (diagonals only? both axes plus diagonals?).
+  Q5 Do immature plants block a cell against another plant spreading into it?
+  Q6 Is the JSON key "plant_index" or "index"? The full example uses
+     plant_index, a smaller snippet uses index.
+  These get resolved by SUBMITTING and reading the score back, not by theory.
+================================================================================

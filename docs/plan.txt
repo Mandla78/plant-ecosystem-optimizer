@@ -1,0 +1,171 @@
+================================================================================
+ PLAN.TXT  --  per-level strategy and the build timetable
+================================================================================
+
+
+
+--------------------------------------------------------------------------------
+GOVERNING PRINCIPLE
+--------------------------------------------------------------------------------
+Get a VALID, SCORING submission on the board for every level EARLY, then improve
+it. A mediocre submitted solution beats a brilliant unsubmitted one. Every level
+gets a safe baseline before anyone touches tuning.
+
+Second principle: prefer strategies that do NOT depend on simulating spread
+exactly. We cannot verify our simulator against theirs. So we lean on:
+  (a) clearing every unlock gate with a wide margin, and
+  (b) dense manual seeding in the final ~100 ticks,
+both of which still work even if our spread model is somewhat wrong.
+
+--------------------------------------------------------------------------------
+THE SHARED TEMPLATE (all levels)
+--------------------------------------------------------------------------------
+Because scoring only looks at the final tick, and plants only live ~100 ticks,
+every level has the same three phases:
+
+  PHASE A - ESTABLISH (tick 0 -> ~40%T)
+    Carpet with the 5 starters to trigger the 6 easy animals. Hand-plant Oaks
+    immediately (slowest maturity). Start the sacrificial Grass block that will
+    become the dead matter Glowcap needs.
+
+  PHASE B - UNLOCK CASCADE (~40%T -> ~80%T)
+    Walk the wave list in unlock_tree.txt. Each time a species unlocks, seed it
+    into its assigned territory. Keep booster populations at threshold.
+
+  PHASE C - FINAL COMPOSITION (last ~100 ticks - THE ONLY PART THAT SCORES)
+    This is where the score is actually made. Use all 20 plants/tick to:
+      - top up any species that is thin (every species present raises H),
+      - refill cells emptied by the nutrient clock,
+      - level the histogram so no species dominates,
+      - keep everything under 50% (Monocryx).
+    Plant as EARLY within this window as possible so survivors are older
+    (longevity), but late enough that they are still alive at tick T.
+
+--------------------------------------------------------------------------------
+LEVEL 1 - GREENHOUSE  (50x50, 500 ticks, 1,800 plantable, 5 species, no animals)
+--------------------------------------------------------------------------------
+This is a pure packing problem, and it is the cheapest score on the board. Do it
+first.
+
+  Ceiling: H = log_31(5) = 0.4687. Nothing can change that.
+  So the ENTIRE game here is maximising C and keeping the 5 species balanced at
+  20% each.
+
+  Layout: partition the 1,800 plantable cells into 5 territories of ~360 each.
+  Constraints that shape the partition:
+    - Oak (shade radius 4, matures at tick 20) KILLS Grass in its disc and stops
+      Dwarf Sunflower spreading. Put Oak in a corner, far from Grass/Sunflower.
+    - Rose Bush and Lavender cannot spread in winter (ticks 300-399). Their
+      expansion must happen before 300 or after 400.
+    - Grass is the fastest filler (maturity 1, spread 2) - use it to mop up
+      leftover space, but cap it well under 50%.
+    - Clay beds (360 cells) are unusable - no starting plant accepts clay.
+      Ignore them entirely.
+
+  Timing: because nothing lives past ~100 ticks, the tick-0 planting is purely
+  to seed the system. The population that actually gets SCORED is whatever is
+  established from roughly tick 380 onward. Plan a heavy replant sweep across
+  ticks ~390-499 (110 ticks x 20 = 2,200 placements, more than the 1,800
+  plantable cells - so we can literally hand-place the entire final garden).
+
+  THAT IS THE KEY L1 INSIGHT: we have more end-game placements than plantable
+  cells. L1 does not need good ecology at all - it needs a well-chosen final
+  hand-painted picture, with spreading as a bonus on top.
+
+--------------------------------------------------------------------------------
+LEVEL 2 - GARDEN  (70x100, 500 ticks, 6,135 plantable, 28 species)
+--------------------------------------------------------------------------------
+The sweet spot: big enough for real spreading, small enough that gates are cheap
+(a 0.05 gate is only 350 cells).
+
+  Target H ~0.95+ with all 28 reachable species present.
+  Blocked: Crystal Cactus (no Drought), Phoenix Bloom (no Ash Eclipse),
+  Bloodbloom (Rhizorends name bug).
+
+  Run the wave schedule. Rain lands at tick 250, which opens Mire Bloom - and
+  Mire Bloom is the only plant that takes clay, so it gets the lake rings
+  (166 clay cells) all to itself, cells nothing else can use.
+
+  Endgame budget: last 100 ticks = 2,000 placements against 6,135 plantable
+  cells, i.e. we can hand-place about a third of the final garden. Enough to
+  guarantee every species is represented and to fix the balance, but the bulk
+  must come from spread.
+
+--------------------------------------------------------------------------------
+LEVEL 3 - PARK  (150x150, 800 ticks, 18,295 plantable, 30 species)
+--------------------------------------------------------------------------------
+All events land early (Drought@10, Rain@150, Ash Eclipse@300), and 800 ticks is
+plenty of room for the full chain. This should be our best H.
+
+  Watch out: a 0.05 gate is 1,125 cells - already past what we can hand-plant.
+  Natural spread must carry the unlock chain. Seed clusters, do not paint.
+
+  Emberroot quarantine: we need burnt soil for Ashroot (feature >= 20) and then
+  Ashroot cov > 0.04 = 901 cells for Phoenix Bloom. That means ~36 Emberroots,
+  placed in a corner block, deliberately walled off from the rest of the map by
+  distance so their radius-2 burn does not sterilise our other territories.
+
+  THE LEVEL ENDS IN WINTER (tick 700-799). Rose Bush and Lavender cannot SPREAD
+  then. Establish them before 700, and top them up by hand at the end
+  (hand-planting is not spreading, so it should still be allowed - verify).
+
+  Shade districts: put the Purple Canopy / Oak cluster together and grow
+  Moonpetal Lily and Ghost Orchid underneath. Ghost Orchid gates Starcap Colony,
+  which is the one species that can coexist on occupied cells - free C and free
+  diversity, so it is worth real effort.
+
+--------------------------------------------------------------------------------
+LEVEL 4 - FOREST  (200x300, 800 ticks, 54,012 plantable, 30 species)
+--------------------------------------------------------------------------------
+The hard one, and it is hard for one specific reason: 16,000 total placements
+against 54,012 plantable cells. We can touch at most 30% of the map by hand, and
+a single 0.05 gate is 3,000 cells.
+
+  => L4 is won by SEED GEOMETRY, not by planting volume. Place many small
+     clusters early, spaced so their spread fronts meet just about at the end,
+     and let exponential growth do the filling.
+  => Spend the manual budget on (1) the unlock chain and (2) the final-100-tick
+     diversity top-up, not on bulk coverage.
+  => Phoenix Bloom needs 2,401 Ashroot cells on burnt soil - roughly 100
+     quarantined Emberroots, burning ~4% of the map. Judgement call: that may
+     cost more coverage than the +1 species is worth. Decide with the simulator;
+     if it is close, SKIP Phoenix Bloom on L4 and take 29 species.
+  => Earthquake at tick 700 creates cracks. Only Skyvine crosses them. Have
+     Skyvine established before 700.
+  => Also ends in winter - same Rose/Lavender caveat as L3.
+
+--------------------------------------------------------------------------------
+BUILD ORDER AND TIMETABLE
+--------------------------------------------------------------------------------
+  11:00 - 11:35   Simulator + scorer. Grid, nutrients, maturity, the 5 spread
+                  patterns, soil rules, unlock trees, animals, entropy and
+                  longevity scoring. Good enough to compare strategies, not
+                  perfect.
+  11:35 - 11:55   L1 solver (territory partition + endgame paint).  SUBMIT L1.
+  11:55 - 12:40   Wave-driven planner for L2.                       SUBMIT L2.
+  12:40 - 13:20   Apply the same planner to L3 and L4.              SUBMIT BOTH.
+  13:20 - 14:30   Iterate. The leaderboard is our only instrument for the
+                  unknown a and k - compare our own score across variants.
+  14:30 - 15:00   Final resubmissions and buffer. Stop touching things at 14:50.
+
+  Each submission needs a ZIP (code) plus the JSON. Keep the generator
+  deterministic and reproducible - rule 6 requires the same output for the same
+  input, so no unseeded randomness anywhere.
+
+--------------------------------------------------------------------------------
+RISKS AND HOW WE HANDLE THEM
+--------------------------------------------------------------------------------
+  R1 Our simulator disagrees with theirs.
+     -> Never rely on precise timing. Overshoot every gate. Lean on the endgame
+        hand-planting, which is deterministic regardless of spread behaviour.
+  R2 Wrong JSON key (plant_index vs index).
+     -> First submission is the test. If L1 scores zero, that is the first
+        thing to check.
+  R3 Coverage denominator is plantable cells, not total cells.
+     -> Overshoot every threshold so both readings pass.
+  R4 An animal disappears and re-locks a species mid-run.
+     -> Hold booster populations at threshold instead of letting them collapse.
+  R5 We run out of time.
+     -> That is why L1 ships first and every level gets a baseline before any
+        tuning. Worst case we submit four mediocre-but-valid solutions.
+================================================================================

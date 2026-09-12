@@ -1,0 +1,154 @@
+================================================================================
+ RESULTS.TXT  --  final results, and what the real engine taught us
+================================================================================
+
+--------------------------------------------------------------------------------
+FINAL SCORES  (from the official evaluation logs in logs/)
+--------------------------------------------------------------------------------
+                    score      entropy   density   species   entropy ceiling
+  Level 1      209,636,426      0.3463    0.7200      4         0.4037
+  Level 2      291,811,331      0.3958    0.8670      6         0.5218
+  Level 3      245,661,742      0.2981    0.8129     10         0.6705
+  Level 4      276,528,784      0.3437    0.8823      9         0.6398
+  ------------------------------------------------------------------------------
+  Finished just over 1 billion after the final round.
+
+  The competition benchmark was 4 billion; the leading entries finished near
+  1.4-1.7 billion.
+
+--------------------------------------------------------------------------------
+THE SCORING FUNCTION, SETTLED
+--------------------------------------------------------------------------------
+The engine prints its own statistics in the evaluation log, which settles what
+we spent most of the event guessing:
+
+    main_score = entropy * density          (so ALPHA = 1)
+    score      = 0.8 * main_score + 0.2 * longevity_score
+    leaderboard = score * 1e9
+
+    entropy = -SUM p_i * log_31(p_i)   over the final plant counts
+    density = total_plants_planted_C / (rows * cols)
+
+tests/test_ground_truth.py asserts all four of these against the real logs.
+
+HOW WE GOT ALPHA WRONG FIRST: with only the Level 1 score to go on, we solved
+0.8*H*(C/Cmax)^a + 0.2*L = score for `a` and got 1.9913, which looked convincing
+to four significant figures. It was wrong, because it assumed our SIMULATED
+garden (5 species, H=0.4687) matched the real one (4 species, H=0.3463). A
+calibration is only as good as the state you assume produced it. One data point
+that fits is not evidence; the log that printed entropy and density directly is.
+
+That mistake had a real cost: believing coverage was SQUARED, we spent hours
+optimising density - which was already near its ceiling - instead of diversity,
+which was where all the remaining score actually was.
+
+--------------------------------------------------------------------------------
+THE THREE THINGS THAT ACTUALLY DECIDED THE SCORE
+--------------------------------------------------------------------------------
+
+1. PLACEMENT ONTO AN OCCUPIED CELL IS DENIED, NOT REPLACED.
+
+   The problem statement says: "If your action dictates that a plant must be
+   placed on an occupied cell, then the existing plant on that cell will be
+   replaced by your new plant."
+
+   The engine log says: "Placement denied for plant 6 at (118, 113): plant
+   already occupies cell".
+
+   The specification is wrong. Every rebalancing-by-overwrite action we emitted
+   did nothing. The deeper consequence is that PLANTING ORDER DECIDES OWNERSHIP:
+   whoever reaches a cell first keeps it.
+
+2. DENSITY LOOKS AFTER ITSELF. ENTROPY IS THE WHOLE GAME.
+
+   Plantable fractions per level are 0.72 / 0.876 / 0.813 / 0.900, and we
+   achieved 0.72 / 0.867 / 0.813 / 0.882 - essentially the ceiling everywhere.
+   A single fast spreader fills the map whatever you do.
+
+   Entropy, meanwhile, finished at 44-86% of its ceiling. Every remaining point
+   of score was in diversity.
+
+3. ONE SPECIES EATS THE GARDEN, AND OAK IS THE WORST OFFENDER.
+
+       Level 3: Oak 68.8% + Razorgrass 18.8% = 87.6% of all plants
+       Level 4: Razorgrass 56.9% + Oak 24.9% = 81.8%
+
+   Oak is doubly bad. It monopolises, AND once mature it shades radius 4, and
+   Grass has no_shade_survival. In our first Level 3 run Oak reached 12,001
+   cells and killed every Grass plant - Grass finished on ZERO. Loamcrawlers
+   requires Grass coverage >= 4%, and Loamcrawlers gates most of the unlock
+   tree, so one species quietly locked us out of a 30-species level. That run
+   scored 20,606,381 with 4 species.
+
+   The fix is to deny the runaways TIME rather than space: release Oak and
+   Razorgrass only in the final ~12 ticks. Oak matures at 20, so it never
+   matures, never spreads and never shades - but still counts as a species.
+
+--------------------------------------------------------------------------------
+THE HALF-PERCENT THAT COST A LEVEL
+--------------------------------------------------------------------------------
+Level 2 finished with Lavender on 108 cells = 1.5% of the grid. The Nectaris
+animal needs 2%. No Nectaris meant no Crimson Vine and no Orange Blossom, and
+only 6 of 28 reachable species ever unlocked.
+
+The cause was ordering: Grass was planted first, spread across the map, and
+Lavender's later placements were refused because those cells were occupied.
+Planting the slow gate-critical species FIRST and Grass last cleared all four
+animal gates from hand-placed cells alone (Lavender 5.1%, Rose 6.1%, Sunflower
+5.7%, Grass 7.7%).
+
+--------------------------------------------------------------------------------
+WHAT WE TRIED THAT DID NOT WORK
+--------------------------------------------------------------------------------
+Each was implemented and measured, not dismissed on theory. They are recorded
+because a ruled-out branch is worth as much as a good one.
+
+  Two-zone map (burn a work zone, keep a pristine reserve)
+      FAILED. Spread does not respect our zones - fast species escaped and
+      thrashed the whole map anyway.
+
+  Small-footprint early cascade (5-25% of the map, from tick 200-340)
+      FAILED. Coverage collapse dominated.
+
+  Staggering seeds by spread speed
+      FAILED as originally built, which throttled every fast species at once.
+      NOTE: the same idea, narrowed to a hard release-tick for the TWO runaway
+      species, is what finally worked. The mechanism was right; the first
+      version applied it too broadly.
+
+  Iterative proportional fitting of seed weights (experimental/balance.py)
+      FAILED. Entropy got WORSE every round - the final mix is driven by spread,
+      not by how many seeds we hand out.
+
+  Capping seeds for fast spreaders
+      FAILED. The fast spreaders ARE the density.
+
+  Gate-push (spend the early budget only on the gate species)
+      FAILED at first, then became essential once we learned that placement is
+      denied on occupied cells and reordered it to plant the SLOW species first.
+
+--------------------------------------------------------------------------------
+WHERE THE REMAINING SCORE WAS
+--------------------------------------------------------------------------------
+Taking Level 3 as the example: entropy 0.298 against a 0.670 ceiling for the 10
+species already present. Simply balancing those ten - no new unlocks at all -
+would have given
+
+    0.8 * 0.670 * 0.813 = 0.436   ->  436M, against the 199M achieved.
+
+The same arithmetic on Levels 2 and 4 puts a balanced version of exactly what we
+already had at roughly 1.5 billion, which is where the leading entries finished.
+We were not short of species or of coverage. We were short of BALANCE, and we
+worked that out too late to act on it properly.
+
+--------------------------------------------------------------------------------
+HONEST LIMITATION OF THIS REPOSITORY
+--------------------------------------------------------------------------------
+The simulator in src/engine reproduces DENSITY and legality well - it predicted
+one Level 3 score to within 2.4% - but it does NOT reproduce COMPOSITION. It
+predicts a Grass monoculture for a Level 2 solution that really produced six
+balanced species. Late decisions were therefore reasoned from the returned
+evaluation logs rather than from the simulator, and the composition-dependent
+unit tests skip rather than assert against a model known to be wrong on that
+axis. Fixing the spread model is the first thing worth doing next.
+================================================================================

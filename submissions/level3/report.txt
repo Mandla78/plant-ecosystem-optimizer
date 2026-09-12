@@ -1,0 +1,16 @@
+LEVEL 3  150x150  ticks=800  animals=True
+  plan: actions=2049  ticks_used=105/800   (built in 10.6s)
+  wrote submissions\level3\solution.json
+  sim:  species=  8  H=0.2293  C= 18143/22500  cov=80.64%  main=0.1849  longev=0.0750  FINAL=0.1629   (4.7s)
+  H ceiling for 8 species = 0.6055
+  planted_ok=1311 rejected_locked=0 rejected_soil=0
+
+populated=18143  species=8  dead_matter=334
+  Grass                 13859  76.39%
+  Dwarf Sunflower        3016  16.62%
+  Crystal Cactus          559   3.08%
+  Crimson Vine            250   1.38%
+  Lavender                245   1.35%
+  Rose Bush               167   0.92%
+  Stone Reed               45   0.25%
+  Oak Tree                  2   0.01%

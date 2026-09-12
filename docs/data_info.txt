@@ -1,0 +1,178 @@
+================================================================================
+ DATA_INFO.TXT  --  the four data files and what is in them
+================================================================================
+
+LOCATION: problem-statement/additional-resources/
+  plant_dataset.json             31 species, growth + soil + rules       (15 KB)
+  plant_unlock_conditions.json   26 unlock trees (5 species need none)   ( 9 KB)
+  animals.json                   10 animals, requirements + effects      ( 6 KB)
+  classifications.json           15 species groups                       ( 1.5 KB)
+
+LOCATION: problem-statement/levels/  1.json 2.json 3.json 4.json
+
+--------------------------------------------------------------------------------
+LEVEL FILE SCHEMA  (same shape for all 4)
+--------------------------------------------------------------------------------
+  { "animals_enabled": bool,
+    "rows": int, "cols": int, "ticks": int,
+    "cells":    [ {"row":int,"col":int,"terrain":int,"soil":int}, ... ],
+    "commands": [ {"type":"season","tick":int,"season":str},
+                  {"type":"event", "tick":int,"event":str} ] }
+
+  IMPORTANT: "cells" only lists NON-DEFAULT cells. Every cell NOT in the list
+  defaults to plain ground + dirt soil (terrain 0, soil 0) and is plantable.
+  e.g. L1 lists 1,060 cells of 2,500 - the other 1,440 are default dirt.
+
+--------------------------------------------------------------------------------
+SUBMISSION SCHEMA  (what we output)
+--------------------------------------------------------------------------------
+  { "actions": [ { "tick": int,
+                   "plants": [ {"plant_index":int,"row":int,"col":int}, ... ] },
+                 ... ] }
+
+  - max 20 entries in "plants" per tick (extras are silently DROPPED)
+  - tick range 0 .. T-1
+  - planting on an occupied cell REPLACES the existing plant
+  - planting a locked plant, or onto bad soil/terrain, is silently IGNORED
+  NOTE: the PDF shows "index" in one snippet and "plant_index" in the worked
+  example. We use "plant_index" (the full example) - confirm on first submission.
+
+--------------------------------------------------------------------------------
+SOIL IDS                         TERRAIN IDS (decoded from the maps - see levels.txt)
+--------------------------------------------------------------------------------
+  0 = Dirt                         0 = ground / plantable
+  1 = Mud                          1 = WATER      (unplantable)
+  2 = Clay                         2 = STONE      (unplantable)
+  3 = Burnt                        4 = PATH       (unplantable)
+                                   3 = never appears in any level file
+  MOST PLANTS ACCEPT ONLY [0,1] = dirt + mud.
+  Clay is accepted ONLY by Mire Bloom. Burnt ONLY by Ashroot Bramble.
+  => clay cells are effectively dead space for 29 of the 31 species.
+
+--------------------------------------------------------------------------------
+FULL PLANT CATALOGUE
+  mat  = time_to_maturity (ticks until it spreads / casts shade / competes)
+  spd  = spread_rate (ticks between spread actions; LOWER = faster)
+  rng  = spread_range        inv = invasiveness_rank (higher wins a contest)
+  soil = preferred_soil
+--------------------------------------------------------------------------------
+idx plant                mat spd rng inv  type       mech        root    soil    
+---------------------------------------------------------------------------------
+  1 Grass                  1   2   1   1  VonNeumann Shoots      Deep    [0, 1]  
+  2 Rose Bush             10   2   1   2  Row        Shoots      Shallow [0, 1]  
+  3 Blue Moss              3   3   1   3  Moore      Spores      Shallow [0, 1]  
+  4 Crimson Vine           4   1   1   9  Column     Shoots      Shallow [0, 1]  
+  5 Dwarf Sunflower        5   4   2   4  CrossHatch Seeds       Shallow [0, 1]  
+  6 Lavender               4   3   1   2  CrossHatch Pollination Shallow [0, 1]  
+  7 Orange Blossom         6   3   4   7  VonNeumann Shoots      Shallow [0, 1]  
+  8 Silver Fern            7   4   1   6  Row        Shoots      Deep    [0, 1]  
+  9 Glowcap Fungus         2   3   1   8  VonNeumann Spores      None    [0, 1]  
+ 10 Purple Canopy Tree    15   6   1  10  Moore      Seeds       Deep    [0, 1]  
+ 11 Stone Reed             5   4   1   5  Column     Shoots      Shallow [0, 1]  
+ 12 Oak Tree              20   7   2  10  Moore      Seeds       Deep    [0, 1]  
+ 13 Emberroot Tree        15   6   4  13  Moore      Seeds       Deep    [0, 1]  
+ 14 Whiteveil Mycelium     8   2   2  11  CrossHatch Shoots      Deep    [0, 1]  
+ 15 Moonpetal Lily         5   4   2   4  Column     Pollination Shallow [0, 1]  
+ 16 Ironthorn Shrub        7   4   1   6  VonNeumann Shoots      Deep    [0, 1]  
+ 17 Crystal Cactus         8   4   2   5  VonNeumann Seeds       Deep    [0, 1]  
+ 18 Mire Bloom             5   3   1   7  VonNeumann Pollination Shallow [0, 1, 2]
+ 19 Razorgrass             2   1   1   8  CrossHatch Shoots      Deep    [0, 1]  
+ 20 Skyvine                4   1   1  12  Column     Shoots      Shallow [0, 1]  
+ 21 Ghost Orchid           8   4   1  11  Moore      Pollination Deep    [0, 1]  
+ 22 Amber Fern            12   6   1  10  VonNeumann Spores      Deep    [0, 1]  
+ 23 Thornheart Bramble     6   3   3   9  VonNeumann Shoots      Shallow [0, 1]  
+ 24 Sporewood Tree        15   4   1  12  Moore      Spores      Shallow [0, 1]  
+ 25 Sunshard Bloom        10   4   1  15  Moore      Pollination Shallow [0, 1]  
+ 26 Ashroot Bramble        5   3   2  13  VonNeumann Shoots      Deep    [3]     
+ 27 Living Topiary        12   4   2  14  CrossHatch Shoots      Deep    [0, 1]  
+ 28 Bloodbloom             6   4   3  14  Moore      Pollination Shallow [0, 1]  
+ 29 Starcap Colony        10   2   2  16  CrossHatch Spores      Deep    [0, 1]  
+ 30 Phoenix Bloom          7   3   3  17  Moore      Seeds       Deep    [0, 1]  
+ 31 Worldtree Sapling     25  10   2  18  Moore      Seeds       Deep    [0, 1]  
+
+RULES PER PLANT (w = weakness, s = special)
+------------------------------------------------------------------------------
+  1 Grass                w:no_shade_survival
+                         role: Fast filler plant
+  2 Rose Bush            w:no_winter_spread
+                         role: Slow directional spreader
+  3 Blue Moss            w:die_if_neighbors_greater_than{'value': 4}; s:adjacent_maturity_boost{'value': 1}
+                         role: Support / synergy plant
+  4 Crimson Vine         w:die_if_isolated
+                         role: Needy creeper
+  5 Dwarf Sunflower      w:no_shade_spread; s:adjacent_shade_penalty
+                         role: Spacing challenge
+  6 Lavender             w:no_winter_spread
+                         role: Pollination engine
+  7 Orange Blossom       (none)
+                         role: Summer burst expander
+  8 Silver Fern          (none)
+                         role: Tank / anchor
+  9 Glowcap Fungus       s:adjacent_maturity_penalty{'value': 2}; s:dead_matter_only_spread
+                         role: Decay mechanic
+ 10 Purple Canopy Tree   s:shade_radius{'value': 2}
+                         role: Shade caster
+ 11 Stone Reed           w:must_be_adjacent_to{'feature': 'rock_or_path'}
+                         role: Terrain exploitation
+ 12 Oak Tree             s:shade_radius{'value': 4}
+                         role: Late-game dominant
+ 13 Emberroot Tree       s:burnt_soil_radius{'value': 2}
+                         role: Hazard species
+ 14 Whiteveil Mycelium   s:subsurface_growth; s:nutrient_transfer_network
+                         role: System-level synergy
+ 15 Moonpetal Lily       w:shade_required
+                         role: Shade specialist
+ 16 Ironthorn Shrub      (none)
+                         role: Defensive protector
+ 17 Crystal Cactus       s:soil_nutrient_regeneration
+                         role: Soil restoration
+ 18 Mire Bloom           w:must_be_adjacent_to{'feature': 'water'}
+                         role: Moisture dependent
+ 19 Razorgrass           s:animal_avoidance{'species': 'Verdelopes'}
+                         role: Deterrent
+ 20 Skyvine              s:crack_spread
+                         role: Terrain bypass
+ 21 Ghost Orchid         w:shade_required
+                         role: Rare shade species
+ 22 Amber Fern           (none)
+                         role: Stability species
+ 23 Thornheart Bramble   s:neighbor_spread_slowdown{'value': 1}
+                         role: Territory control
+ 24 Sporewood Tree       s:boost_whiteveil_spread{'value': 1}
+                         role: Fungal ecosystem builder
+ 25 Sunshard Bloom       s:adjacent_maturity_boost{'value': 2}
+                         role: Ultimate support
+ 26 Ashroot Bramble      w:must_be_burnt_soil
+                         role: Fire specialist
+ 27 Living Topiary       w:no_adjacent_plants
+                         role: Adaptive exclusion species
+ 28 Bloodbloom           s:adjacent_maturity_penalty{'value': 2}
+                         role: Ecosystem predator
+ 29 Starcap Colony       s:coexist_all_species
+                         role: Diversity anchor
+ 30 Phoenix Bloom        s:resurrect_after_destruction; s:burnt_soil_maturity_boost{'value': 2}
+                         role: Regeneration specialist
+ 31 Worldtree Sapling    s:auto_unlock_synergy_species{'species': ['Barkskips', 'Canorals']}
+                         role: Final ecosystem goal
+
+--------------------------------------------------------------------------------
+CLASSIFICATIONS (species groups used by unlock + animal conditions)
+--------------------------------------------------------------------------------
+  Ground Cover                 Grass, Blue Moss, Razorgrass
+  Flowering Plants             Rose Bush, Lavender, Dwarf Sunflower, Orange Blossom, Moonpetal Lily, Mire Bloom, Ghost Orchid, Sunshard Bloom, Bloodbloom, Phoenix Bloom
+  Pollination Plants           Lavender, Rose Bush, Orange Blossom, Moonpetal Lily, Mire Bloom, Ghost Orchid, Sunshard Bloom
+  Seed Plants                  Dwarf Sunflower, Oak Tree, Purple Canopy Tree, Emberroot Tree, Crystal Cactus, Phoenix Bloom, Worldtree Sapling
+  Flowering Seed Plants        Dwarf Sunflower, Phoenix Bloom
+  Trees                        Oak Tree, Purple Canopy Tree, Emberroot Tree, Sporewood Tree, Worldtree Sapling
+  Bushes / Shrubs              Rose Bush, Ironthorn Shrub, Living Topiary
+  Vines                        Crimson Vine, Skyvine
+  Ferns                        Silver Fern, Amber Fern
+  Fungi / Mycelial Species     Glowcap Fungus, Whiteveil Mycelium, Starcap Colony
+  Fireadapted Species          Emberroot Tree, Ashroot Bramble, Phoenix Bloom
+  Moisturedependent Species    Blue Moss, Mire Bloom, Ghost Orchid
+  Deep-root Species            Grass, Silver Fern, Stone Reed, Oak Tree, Emberroot Tree, Crystal Cactus, Amber Fern, Ashroot Bramble, Worldtree Sapling
+  Shallowroot Species          Rose Bush, Lavender, Blue Moss, Crimson Vine, Orange Blossom, Moonpetal Lily, Mire Bloom
+  Networkroot Species          Whiteveil Mycelium, Sporewood Tree, Starcap Colony
+
+  !! NAME MISMATCH: animals.json asks for 'Shallow-root Species' but this
+     file defines 'Shallowroot Species'. Affects Rhizorends + Virexids.

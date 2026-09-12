@@ -1,0 +1,131 @@
+================================================================================
+ SCORING.TXT  --  the maths, and what it tells us to actually do
+================================================================================
+
+--------------------------------------------------------------------------------
+RESOLVED - READ THIS FIRST
+--------------------------------------------------------------------------------
+This file was written while alpha, k and the leaderboard scale were still
+unknown. They were later settled outright by the engine's own evaluation logs
+(see logs/ and docs/results.txt), which print entropy, density and main_score:
+
+    ALPHA = 1        main_score = entropy * density, exactly
+    SCALE = 1e9      leaderboard = score * 1e9
+    score = 0.8 * main_score + 0.2 * longevity_score
+
+Treat the "a = UNKNOWN" passages below as a record of the reasoning at the time,
+not as open questions. Note in particular that the calibration described later -
+which concluded alpha ~ 2 from the Level 1 score alone - was WRONG: it assumed
+our simulated garden matched the real one. tests/test_ground_truth.py now
+asserts the real relationship against the logs.
+
+--------------------------------------------------------------------------------
+THE FORMULA
+--------------------------------------------------------------------------------
+  N    = 31            total species types IN THE GAME (fixed - not per level)
+  n_i  = count of species i on the grid AT THE FINAL TICK
+  C    = SUM n_i       total populated cells
+  p_i  = n_i / C
+  Cmax = rows * cols
+
+  Diversity (entropy):   H = - SUM p_i * log_31(p_i)        (0*log0 = 0)
+  Sample size factor:    (C / Cmax)^a                       a = UNKNOWN
+  MAIN SCORE          =  H * (C/Cmax)^a
+
+  Longevity           =  (1/Cmax) * SUM_over_all_cells (l_ij / T)^k
+                         l_ij = lifespan in ticks of the plant in that cell,
+                         0 if empty.   k = UNKNOWN
+
+  FINAL = 0.8 * MAIN + 0.2 * LONGEVITY,  then multiplied by a large unknown
+  constant to give the leaderboard number.
+
+  ONLY THE FINAL TICK IS SCORED. Anything that died earlier contributes nothing.
+
+--------------------------------------------------------------------------------
+WHAT H ACTUALLY PAYS
+--------------------------------------------------------------------------------
+  If S species are present in EQUAL proportions, H = log_31(S):
+
+     S     H        S     H        S     H
+     1   0.000      8   0.606     20   0.873
+     2   0.202     10   0.670     24   0.925
+     3   0.320     12   0.724     28   0.970
+     4   0.404     14   0.769     30   0.990
+     5   0.469     16   0.807     31   1.000
+     6   0.522     18   0.842
+
+  Two lessons:
+  1. Early species are worth enormously more than late ones. Going from 5 to 10
+     species is +43% on H. Going from 28 to 31 is only +3%.
+  2. It is ALWAYS worth adding one more species, even a tiny population of it -
+     a species present at 1% still raises H. So in the endgame, hand-planting
+     even 20 cells of a missing species is a real gain.
+
+  IMBALANCE PENALTY: H only hits log_31(S) when all species are equal. A garden
+  with 10 species where one holds 80% scores roughly like a 3-4 species garden.
+  Balance is worth nearly as much as species count.
+
+--------------------------------------------------------------------------------
+THE TENSION WE HAVE TO MANAGE
+--------------------------------------------------------------------------------
+  H wants MANY species in EQUAL amounts.
+  (C/Cmax)^a wants the map as FULL as possible.
+  Those fight each other: the fastest way to fill the map is to let one
+  aggressive species run, which destroys H.
+
+  RESOLUTION: spatial partitioning. Split the plantable area into S roughly
+  equal territories and let ONE species dominate each. Every species then ends
+  at about 1/S of C, H approaches its ceiling, AND the map fills up. The
+  territories also keep aggressive species from eating everyone else.
+
+  This is the core idea behind all four level strategies.
+
+--------------------------------------------------------------------------------
+PARAMETERS a AND k  (a is now known to be 1 - see RESOLVED above)
+--------------------------------------------------------------------------------
+  We cannot derive them. But note their direction:
+   - a > 1 punishes low coverage hard, so filling the map matters more.
+   - a < 1 flattens coverage, so diversity matters even more.
+   - Either way, MORE SPECIES and MORE COVERAGE are both monotonic gains. There
+     is no value of a or k where adding a species or filling a cell hurts.
+  So we optimise both and do not gamble on a specific a.
+
+  Calibration plan: the leaderboard is our only instrument. Submit a baseline,
+  then submit a variant with noticeably different C at similar H, and the score
+  ratio tells us roughly what a is. Only worth doing if time allows.
+
+--------------------------------------------------------------------------------
+THE LONGEVITY TERM IS SMALL - DO NOT OVER-INVEST
+--------------------------------------------------------------------------------
+  Longevity averages (l/T)^k over ALL Cmax cells, including empty ones, and is
+  weighted only 0.2.
+
+  Because of the nutrient clock, a plant lives ~100 ticks. On L1/L2 (T=500)
+  that gives (100/500)^k = 0.2^k per occupied cell. On L3/L4 (T=800) it is
+  (100/800)^k = 0.125^k. With k=1 and 60% occupancy, longevity contributes
+  roughly 0.2 * 0.6 * 0.2 = 0.024 against a main score around 0.8 * 0.9 * 0.5
+  = 0.36. So it is worth roughly 6% of the total.
+
+  CONCLUSION: chase diversity and coverage first. Take longevity only where it
+  is free - i.e. plant things as EARLY as the unlock allows (so survivors are
+  old), and use the soil-regeneration synergies (Crystal Cactus, Whiteveil
+  network, Grazeleths) which raise coverage AND longevity at the same time.
+
+  The one genuinely big longevity play: if soil regeneration can fully cancel
+  the -1/tick drain, plants live the whole game and (l/T)^k goes to 1 instead
+  of 0.125 - an 8x on that term. Worth testing on L3/L4 if time permits.
+
+--------------------------------------------------------------------------------
+PRACTICAL TARGET PER LEVEL
+--------------------------------------------------------------------------------
+  L1: 5 species, each ~20% of C, C as close to 1,800 as the nutrient clock
+      allows.            Realistic main score ~ 0.469 * (C/2500)^a
+  L2: 28 species, balanced, C toward 6,135.       H target ~0.95+
+  L3: 30 species, balanced, C toward 18,295.      H target ~0.97+
+  L4: 30 species, balanced, C toward 54,012.      H target ~0.97+
+      (L4 is spread-limited, so realistically fewer species reach real numbers -
+      expect to hand-seed the tail species in the last 100 ticks.)
+
+  AND ALWAYS: keep every species under 50% share. Above 50% the Monocryx animal
+  appears, which hard-blocks the Amber Fern unlock via species_absent.
+================================================================================

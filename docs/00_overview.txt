@@ -1,0 +1,70 @@
+================================================================================
+ 00_OVERVIEW.TXT  --  Entelect Hack<IT> : Root Cause Analysis
+ Read this first. Everything else expands on it.
+================================================================================
+
+--------------------------------------------------------------------------------
+THE 6 THINGS THAT MATTER MOST
+--------------------------------------------------------------------------------
+
+1. SCORE = 0.8 * [ H * (C/Cmax)^a ] + 0.2 * [ longevity ]
+   H = -SUM p_i * log_31(p_i).  Base 31 = ALL species in the game, always.
+   => With S species present in EQUAL proportions, H = log_31(S).
+   => Species COUNT is the single biggest lever. Balance is the second.
+
+2. LEVEL 1 IS A 5-SPECIES LEVEL. animals_enabled = false and there are zero
+   events, so every single unlock in the tree is unreachable. L1 is not an
+   unlock puzzle at all - it is a pure packing + balance problem.
+   H is capped at log_31(5) = 0.4687 no matter what we do.
+
+3. THE NUTRIENT CLOCK IS THE DOMINANT MECHANIC.
+   Cell starts at 100 nutrients, loses 1/tick while occupied, plant dies at 0.
+   => No plant lives more than ~100 ticks without help.
+   => Whatever is alive on the final tick was established in the last ~100 ticks.
+   => Longevity score is stuck near (100/T)^k unless we actively regenerate soil
+      (Crystal Cactus, Whiteveil network, Loamcrawlers/Grazeleths).
+
+4. ONLY THE FINAL TICK IS SCORED. Everything that died earlier is worth zero.
+   So the whole submission is really "set up an ecosystem that looks maximally
+   diverse and maximally full on ONE specific tick".
+
+5. 20 PLANTS PER TICK IS A HARD CAP. Total manual placements available:
+   L1 = 10,000 / L2 = 10,000 / L3 = 16,000 / L4 = 16,000.
+   L1 (1,800 plantable cells) can be hand-built almost entirely.
+   L4 (54,012 plantable cells) CANNOT - natural spread must do the work there.
+
+6. NEVER LET ONE SPECIES PASS 50%. It wrecks H, and it spawns the Monocryx
+   animal, which hard-blocks the Amber Fern unlock (species_absent Monocryx).
+
+--------------------------------------------------------------------------------
+SPECIES CEILING PER LEVEL  (computed, not guessed - see unlock_tree.txt)
+--------------------------------------------------------------------------------
+
+  LEVEL 1 :  5 / 31 species   H_max = 0.4687   (no animals, no events)
+  LEVEL 2 : 28 / 31 species   H_max = 0.9704   (no Drought, no Ash Eclipse)
+  LEVEL 3 : 30 / 31 species   H_max = 0.9905   (all events except Earthquake)
+  LEVEL 4 : 30 / 31 species   H_max = 0.9905   (all events)
+
+  Blocked on L2: Crystal Cactus (needs Drought), Phoenix Bloom (needs Ash
+                 Eclipse), Bloodbloom (see data bug below).
+  Blocked on L3/L4: Bloodbloom only.
+
+  DATA BUG - worth knowing: Bloodbloom needs the Rhizorends animal. Rhizorends
+  requires species_group "Shallow-root Species". classifications.json spells it
+  "Shallowroot Species" (no hyphen). If their engine does a literal string
+  match, Rhizorends can NEVER appear and Bloodbloom is unreachable. If their
+  engine normalises the name, it is trivially reachable (25 shallow-root plants).
+  PLAN: assume 30 species, but still attempt Bloodbloom late - a rejected
+  planting action is simply ignored, so trying costs us nothing.
+
+--------------------------------------------------------------------------------
+FILE GUIDE
+--------------------------------------------------------------------------------
+  00_overview.txt   this file
+  data_info.txt     the 4 data files, schemas, full plant catalogue table
+  levels.txt        level specs, decoded terrain, maps, plantable budgets
+  mechanics.txt     how the simulation works + what is still ambiguous
+  scoring.txt       the scoring maths and what it implies tactically
+  unlock_tree.txt   animals, unlock waves, the critical path
+  plan.txt          per-level strategy and the build timetable
+================================================================================

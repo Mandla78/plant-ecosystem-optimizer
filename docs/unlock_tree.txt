@@ -1,0 +1,304 @@
+================================================================================
+ UNLOCK_TREE.TXT  --  animals, gates, and the critical path
+================================================================================
+
+START: you always begin with exactly 5 plants -
+   1 Grass, 2 Rose Bush, 5 Dwarf Sunflower, 6 Lavender, 12 Oak Tree
+Everything else is locked. A planting action for a locked plant is IGNORED
+(not an error), so it is always safe to try one speculatively.
+
+--------------------------------------------------------------------------------
+ANIMALS ARE THE REAL GATEKEEPERS
+--------------------------------------------------------------------------------
+Animals are not planted - they APPEAR when their requirements hold, and they
+DISAPPEAR again when the requirements stop holding. 15 of the 26 unlock trees
+need at least one animal present. On Level 1 animals_enabled = false, which is
+exactly why Level 1 is stuck at 5 species.
+
+CRITICAL: an animal leaving can RE-LOCK a plant you were relying on. Keep the
+trigger populations alive all game; do not let them get overrun.
+
+  ANIMAL        REQUIREMENT                                   EFFECT
+  ------------  --------------------------------------------  -------------------
+  Nectaris      Lavender cov >= 0.02  OR  group cov >= 0.02    Pollination spread
+                of {Lavender, Rose Bush, Dwarf Sunflower,      x1.5, Flowering
+                Orange Blossom}                                maturation x1.1
+  Solwings      Dwarf Sunflower cov >= 0.03 AND                Seed dispersal x1.5
+                Rose Bush cov >= 0.02                          on Flowering Seed
+  Verdelopes    Grass cov >= 0.05                              Grass spread x1.1,
+                                                               Rose maturation x0.9
+  Loamcrawlers  Grass cov >= 0.04 AND Rose Bush count >= 10    soil regen x1.05
+  Virexids      Lavender count >= 10 AND Grass count >= 10     shallow-root
+                                                               spread x1.1
+  Grazeleths    Grass cov >= 0.04 AND count >= 10 of           soil regen x1.15,
+                {Rose Bush, Lavender, Orange Blossom}          Flowering
+                                                               regression x2 (BAD)
+  Canorals      Trees count >= 10 OR Flowering group cov       Seed plant
+                >= 0.05 OR Worldtree count >= 1                spread_range x1.05
+  Barkskips     Oak Tree count >= 8 OR Worldtree count >= 1    Tree spread x1.1
+  Monocryx      any single species >= 50% dominance            none, BUT it
+                                                               BLOCKS Amber Fern
+  Rhizorends    count >= 25 of species_group                   none
+                "Shallow-root Species"   <-- NAME BUG, below
+
+THE EASY BLOCK: Nectaris, Verdelopes, Loamcrawlers, Virexids and Grazeleths ALL
+trigger off nothing but Grass + Rose Bush + Lavender, which we have from tick 0.
+Solwings just adds Dwarf Sunflower. So SIX of the ten animals are reachable in
+the opening phase using only the starting plants. That is the entire early game:
+carpet the map with the 5 starters, and six animals show up on their own.
+
+THE NAME BUG: Rhizorends wants species_group "Shallow-root Species".
+classifications.json spells it "Shallowroot Species" (no hyphen). If the engine
+matches literally, Rhizorends NEVER appears, and Bloodbloom - gated solely on
+Rhizorends - is unreachable. We assume 30 species and treat Bloodbloom as a free
+lottery ticket: attempt it late, it costs nothing if it fails. The Virexids
+EFFECT targets the same misspelled group, so that buff may silently do nothing
+too. Harmless either way.
+
+MONOCRYX IS A TRAP: let any species reach 50% and you lose Amber Fern. Since we
+optimise for balanced proportions anyway this is nearly automatic - but watch
+Grass and Razorgrass, the two fastest spreaders.
+
+GRAZELETHS IS DOUBLE-EDGED: +15% soil regeneration (the best longevity effect in
+the game) but ALSO regression_rate x2 on Flowering Plants, which is 10 of our
+species. Worth keeping, but keep the flowering species topped up.
+
+--------------------------------------------------------------------------------
+UNLOCK WAVES  (computed by fixpoint over the dependency graph)
+--------------------------------------------------------------------------------
+LEVEL 1  -  5 / 31 species. NOTHING unlocks. No animals, no events.
+            Do not spend a single minute on unlock logic here.
+
+LEVEL 2  -  28 / 31.  Blocked: Crystal Cactus (no Drought), Phoenix Bloom (no
+            Ash Eclipse), Bloodbloom (Rhizorends bug).
+LEVEL 3  -  30 / 31.  Blocked: Bloodbloom only.
+LEVEL 4  -  30 / 31.  Blocked: Bloodbloom only.
+
+The wave structure is IDENTICAL on L2 / L3 / L4 - the bigger levels just add the
+event-gated species. This is the build order:
+
+  WAVE 0  (tick 0)      Grass, Rose Bush, Lavender, Dwarf Sunflower, Oak Tree
+                        -> carpet the map to trigger the animal block
+
+  WAVE 1  (animals up)  Blue Moss, Crimson Vine, Glowcap Fungus, Ironthorn
+                        Shrub, Orange Blossom, Razorgrass, Stone Reed
+                        (+ Crystal Cactus on L3/L4, once Drought has fired)
+
+  WAVE 2                Mire Bloom (needs Rain), Moonpetal Lily, Purple Canopy
+                        Tree, Silver Fern, Thornheart Bramble, Whiteveil
+                        Mycelium
+
+  WAVE 3                Amber Fern, Emberroot Tree, Ghost Orchid, Living
+                        Topiary, Skyvine, Sporewood Tree, Sunshard Bloom
+
+  WAVE 4                Ashroot Bramble, Starcap Colony, Worldtree Sapling
+
+  WAVE 5  (L3/L4 only)  Phoenix Bloom (Ash Eclipse + Emberroot + Ashroot)
+
+--------------------------------------------------------------------------------
+THE CRITICAL PATH - the longest chains, start these first
+--------------------------------------------------------------------------------
+  Grass + Rose -> Loamcrawlers -> Blue Moss -> Silver Fern -> Amber Fern
+  Grass + Rose -> Loamcrawlers + dead matter -> GLOWCAP FUNGUS
+               -> Whiteveil Mycelium (Glowcap cov > 0.05)
+               -> Sporewood / Emberroot / Starcap
+               -> Ashroot Bramble -> PHOENIX BLOOM
+  Lavender + Blue Moss -> Moonpetal Lily -> Ghost Orchid -> Starcap Colony
+  Oak x6 + Purple Canopy x6 + Sporewood x4 + Barkskips -> WORLDTREE SAPLING
+
+  FOUR BOTTLENECKS TO START EARLY:
+
+  1. GLOWCAP needs DEAD MATTER (feature > 0.05) and it only spreads onto dead
+     matter. Dead matter appears only when plants die, which takes ~100 ticks of
+     nutrient drain. So build a SACRIFICIAL ZONE at tick 0: a dense block of
+     Grass that is allowed to starve around tick 100, manufacturing exactly the
+     dead matter Glowcap needs. Nothing else in the game produces it on demand.
+
+  2. PURPLE CANOPY TREE (maturity 15) gates Skyvine (x3), Emberroot (x4),
+     Sporewood (x4), Living Topiary (x3) and Worldtree (x6). Get 6+ planted the
+     moment Blue Moss + Crimson Vine coverage allows.
+
+  3. OAK TREE (maturity 20, spread_rate 7 - the slowest thing we need 8 of, for
+     Barkskips -> Worldtree). Oak is UNLOCKED FROM TICK 0, so there is no reason
+     to wait: hand-plant all 8+ Oaks in the very first ticks.
+
+  4. PHOENIX BLOOM needs Ashroot coverage > 0.04, and Ashroot only grows on
+     BURNT soil. On L4 that is 2,401 burnt cells. Each Emberroot burns a radius-2
+     disc (~25 cells), so that implies roughly 100 well-spread Emberroots, all
+     quarantined away from everything else. This is a real sub-project - on L4 it
+     may be cheaper to accept losing Phoenix Bloom than to burn 4% of the map.
+     On L3 it is 901 cells (~36 Emberroots) which is more affordable.
+
+--------------------------------------------------------------------------------
+EVERY UNLOCK GATE, WITH THRESHOLDS CONVERTED TO CELL COUNTS PER LEVEL
+  (coverage thresholds read as fractions of rows*cols = Cmax)
+--------------------------------------------------------------------------------
+[Blue Moss]
+  AND
+    ANIMAL present: Loamcrawlers
+    coverage Grass > 0.03   -> cells L1:76 / L2:211 / L3:676 / L4:1801
+    coverage Rose Bush > 0.01   -> cells L1:26 / L2:71 / L3:226 / L4:601
+
+[Orange Blossom]
+  AND
+    OR
+      ANIMAL present: Nectaris
+      ANIMAL present: Solwings
+    coverage Rose Bush > 0.02   -> cells L1:51 / L2:141 / L3:451 / L4:1201
+
+[Glowcap Fungus]
+  AND
+    ANIMAL present: Loamcrawlers
+    feature dead_matter > 0.05
+
+[Stone Reed]
+  AND
+    ANIMAL present: Virexids
+
+[Crimson Vine]
+  AND
+    OR
+      ANIMAL present: Nectaris
+      ANIMAL present: Canorals
+    coverage Rose Bush > 0.0   -> cells L1:1 / L2:1 / L3:1 / L4:1
+    coverage Lavender > 0.0   -> cells L1:1 / L2:1 / L3:1 / L4:1
+
+[Silver Fern]
+  AND
+    OR
+      ANIMAL present: Loamcrawlers
+      ANIMAL present: Grazeleths
+    coverage Blue Moss > 0.03   -> cells L1:76 / L2:211 / L3:676 / L4:1801
+
+[Purple Canopy Tree]
+  AND
+    coverage Blue Moss > 0.01   -> cells L1:26 / L2:71 / L3:226 / L4:601
+    coverage Crimson Vine > 0.04   -> cells L1:101 / L2:281 / L3:901 / L4:2401
+
+[Whiteveil Mycelium]
+  AND
+    coverage Glowcap Fungus > 0.05   -> cells L1:126 / L2:351 / L3:1126 / L4:3001
+    OR
+      ANIMAL present: Loamcrawlers
+      ANIMAL present: Rhizorends
+
+[Emberroot Tree]
+  AND
+    coverage Whiteveil Mycelium > 0.05   -> cells L1:126 / L2:351 / L3:1126 / L4:3001
+    count Purple Canopy Tree >= 4
+
+[Moonpetal Lily]
+  AND
+    ANIMAL present: Nectaris
+    coverage Lavender > 0.04   -> cells L1:101 / L2:281 / L3:901 / L4:2401
+    coverage Blue Moss > 0.02   -> cells L1:51 / L2:141 / L3:451 / L4:1201
+
+[Ironthorn Shrub]
+  AND
+    ANIMAL present: Grazeleths
+    coverage Rose Bush > 0.04   -> cells L1:101 / L2:281 / L3:901 / L4:2401
+
+[Crystal Cactus]
+  AND
+    EVENT: Drought
+    coverage Grass > 0.04   -> cells L1:101 / L2:281 / L3:901 / L4:2401
+
+[Mire Bloom]
+  AND
+    coverage Blue Moss > 0.05   -> cells L1:126 / L2:351 / L3:1126 / L4:3001
+    EVENT: Rain
+
+[Razorgrass]
+  AND
+    ANIMAL present: Verdelopes
+    coverage Grass > 0.05   -> cells L1:126 / L2:351 / L3:1126 / L4:3001
+
+[Skyvine]
+  AND
+    coverage Crimson Vine > 0.04   -> cells L1:101 / L2:281 / L3:901 / L4:2401
+    count Purple Canopy Tree >= 3
+
+[Ghost Orchid]
+  AND
+    coverage Glowcap Fungus > 0.03   -> cells L1:76 / L2:211 / L3:676 / L4:1801
+    coverage Moonpetal Lily > 0.03   -> cells L1:76 / L2:211 / L3:676 / L4:1801
+
+[Amber Fern]
+  AND
+    coverage Silver Fern > 0.06   -> cells L1:151 / L2:421 / L3:1351 / L4:3601
+    ANIMAL present: Loamcrawlers
+    ANIMAL absent: Monocryx
+
+[Thornheart Bramble]
+  AND
+    coverage Ironthorn Shrub > 0.05   -> cells L1:126 / L2:351 / L3:1126 / L4:3001
+    coverage Crimson Vine > 0.03   -> cells L1:76 / L2:211 / L3:676 / L4:1801
+
+[Sporewood Tree]
+  AND
+    coverage Whiteveil Mycelium > 0.03   -> cells L1:76 / L2:211 / L3:676 / L4:1801
+    count Purple Canopy Tree >= 4
+
+[Sunshard Bloom]
+  AND
+    coverage Orange Blossom > 0.02   -> cells L1:51 / L2:141 / L3:451 / L4:1201
+    coverage Moonpetal Lily > 0.04   -> cells L1:101 / L2:281 / L3:901 / L4:2401
+    ANIMAL present: Nectaris
+    ANIMAL present: Solwings
+
+[Ashroot Bramble]
+  AND
+    coverage Emberroot Tree > 0.0   -> cells L1:1 / L2:1 / L3:1 / L4:1
+    feature burnt_soil >= 20
+
+[Living Topiary]
+  AND
+    coverage Silver Fern > 0.04   -> cells L1:101 / L2:281 / L3:901 / L4:2401
+    count Purple Canopy Tree >= 3
+    ANIMAL present: Canorals
+
+[Bloodbloom]
+  AND
+    coverage Crimson Vine > 0.05   -> cells L1:126 / L2:351 / L3:1126 / L4:3001
+    ANIMAL present: Rhizorends
+
+[Starcap Colony]
+  AND
+    coverage Whiteveil Mycelium > 0.05   -> cells L1:126 / L2:351 / L3:1126 / L4:3001
+    coverage Glowcap Fungus > 0.03   -> cells L1:76 / L2:211 / L3:676 / L4:1801
+    coverage Ghost Orchid > 0.01   -> cells L1:26 / L2:71 / L3:226 / L4:601
+
+[Phoenix Bloom]
+  AND
+    coverage Emberroot Tree > 0.0   -> cells L1:1 / L2:1 / L3:1 / L4:1
+    coverage Ashroot Bramble > 0.04   -> cells L1:101 / L2:281 / L3:901 / L4:2401
+    EVENT: Ash Eclipse
+
+[Worldtree Sapling]
+  AND
+    count Oak Tree >= 6
+    count Purple Canopy Tree >= 6
+    count Sporewood Tree >= 4
+    ANIMAL present: Barkskips
+
+--------------------------------------------------------------------------------
+NOTE ON THE BIG LEVELS
+--------------------------------------------------------------------------------
+Look at the L4 column above. A 0.05 coverage gate is 3,000 cells, and we get
+only 16,000 manual placements in the ENTIRE game. Several such gates at once is
+far beyond hand-planting. On L3 and L4 the unlock chain can only be driven by
+NATURAL SPREAD - we place seed clusters and let them expand. On L2 (7,000 cells)
+a 0.05 gate is only 350 cells, so L2 can be driven much more directly by hand.
+
+AN ASSUMPTION WE NEED TO TEST (do not treat as fact):
+Is an unlock PERMANENT once its condition has been met, or is it re-evaluated
+every time we try to plant? The spec only says this explicitly for events ("has
+transpired at least once"). For coverage gates it is unstated.
+  - If unlocks are permanent, we can let a booster species boom, trip the gate,
+    then let it fade back so it does not distort the final entropy. Much easier.
+  - If they are re-evaluated live, every booster population must be HELD at its
+    threshold for as long as we still want to plant the species it gates.
+SAFE PLAY until we know: hold the booster populations at threshold rather than
+letting them collapse, and do all the planting of a newly unlocked species while
+its gate is still comfortably satisfied. That works under both readings.
+================================================================================

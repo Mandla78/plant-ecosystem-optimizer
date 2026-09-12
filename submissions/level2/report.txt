@@ -1,0 +1,11 @@
+LEVEL 2  70x100  ticks=500  animals=True
+  plan: actions=1944  ticks_used=99/500   (built in 2.7s)
+  wrote submissions\level2\solution.json
+  sim:  species=  3  H=0.0949  C=  6135/7000  cov=87.64%  main=0.0832  longev=0.1453  FINAL=0.0956   (1.4s)
+  H ceiling for 3 species = 0.3199
+  planted_ok=660 rejected_locked=0 rejected_soil=0
+
+populated=6135  species=3  dead_matter=0
+  Lavender               5647  92.05%
+  Rose Bush               343   5.59%
+  Dwarf Sunflower         145   2.36%

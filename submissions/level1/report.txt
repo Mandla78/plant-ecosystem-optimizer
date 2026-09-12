@@ -1,0 +1,11 @@
+LEVEL 1  50x50  ticks=500  animals=False
+  plan: actions=1800  ticks_used=90/500   (built in 0.0s)
+  wrote submissions\level1\solution.json
+  sim:  species=  3  H=0.0576  C=  1800/2500  cov=72.00%  main=0.0415  longev=0.0960  FINAL=0.0524   (0.5s)
+  H ceiling for 3 species = 0.3199
+  planted_ok=123 rejected_locked=0 rejected_soil=0
+
+populated=1800  species=3  dead_matter=0
+  Grass                  1727  95.94%
+  Rose Bush                38   2.11%
+  Lavender                 35   1.94%

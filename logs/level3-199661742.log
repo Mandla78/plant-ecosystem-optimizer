@@ -1,0 +1,201 @@
+[2026-09-12T12:11:11.820906+00:00] Started evaluation for submission c3295dfc-6151-4b48-9ea1-4038c7ed82fd at 2026-09-12T12:11:11.820876+00:00
+[2026-09-12T12:11:11.820910+00:00] Validating JSON input...
+[2026-09-12T12:11:11.820913+00:00] Downloading submission input...
+[2026-09-12T12:11:11.886677+00:00] Input valid
+[2026-09-12T12:11:11.893051+00:00] PlantSim loading level
+[2026-09-12T12:11:11.919177+00:00] PlantSim loaded level (150x150, 800 ticks)
+[2026-09-12T12:11:12.214649+00:00] PlantSim input validation started
+[2026-09-12T12:11:12.216306+00:00] PlantSim input validation completed
+[2026-09-12T12:11:12.216355+00:00] PlantSim scheduled 1980 participant actions
+[2026-09-12T12:11:12.216358+00:00] PlantSim simulation started
+[2026-09-12T12:11:12.425310+00:00] Weather condition occurred: Drought on tick 10
+[2026-09-12T12:11:12.428779+00:00] Weather condition occurred: season changed to Summer on tick 100
+[2026-09-12T12:11:12.430725+00:00] Weather condition occurred: Rain on tick 150
+[2026-09-12T12:11:12.432642+00:00] Weather condition occurred: season changed to Autumn on tick 200
+[2026-09-12T12:11:12.436581+00:00] Weather condition occurred: season changed to Winter on tick 300
+[2026-09-12T12:11:12.436587+00:00] Weather condition occurred: Ash Eclipse on tick 300
+[2026-09-12T12:11:12.440485+00:00] Weather condition occurred: season changed to Spring on tick 400
+[2026-09-12T12:11:12.445403+00:00] Weather condition occurred: season changed to Summer on tick 500
+[2026-09-12T12:11:12.449652+00:00] Weather condition occurred: season changed to Autumn on tick 600
+[2026-09-12T12:11:12.454058+00:00] Weather condition occurred: season changed to Winter on tick 700
+[2026-09-12T12:11:13.640037+00:00] Placement denied for plant 4 at (122, 0): unlock condition check failed
+[2026-09-12T12:11:13.640069+00:00] Placement denied for plant 4 at (3, 139): unlock condition check failed
+[2026-09-12T12:11:13.640078+00:00] Placement denied for plant 4 at (70, 48): unlock condition check failed
+[2026-09-12T12:11:13.787087+00:00] Placement denied for plant 4 at (7, 149): unlock condition check failed
+[2026-09-12T12:11:13.787120+00:00] Placement denied for plant 4 at (147, 54): unlock condition check failed
+[2026-09-12T12:11:13.787129+00:00] Placement denied for plant 4 at (50, 87): unlock condition check failed
+[2026-09-12T12:11:13.946136+00:00] Placement denied for plant 11 at (88, 0): unlock condition check failed
+[2026-09-12T12:11:13.946183+00:00] Placement denied for plant 4 at (2, 124): unlock condition check failed
+[2026-09-12T12:11:13.946192+00:00] Placement denied for plant 4 at (124, 145): unlock condition check failed
+[2026-09-12T12:11:13.946199+00:00] Placement denied for plant 4 at (79, 130): unlock condition check failed
+[2026-09-12T12:11:14.104275+00:00] Placement denied for plant 4 at (8, 67): unlock condition check failed
+[2026-09-12T12:11:14.104311+00:00] Placement denied for plant 4 at (1, 130): unlock condition check failed
+[2026-09-12T12:11:14.104319+00:00] Placement denied for plant 4 at (147, 46): unlock condition check failed
+[2026-09-12T12:11:14.246611+00:00] Placement denied for plant 11 at (21, 28): unlock condition check failed
+[2026-09-12T12:11:14.246652+00:00] Placement denied for plant 4 at (81, 0): unlock condition check failed
+[2026-09-12T12:11:14.246660+00:00] Placement denied for plant 4 at (79, 12): unlock condition check failed
+[2026-09-12T12:11:14.246666+00:00] Placement denied for plant 4 at (45, 122): unlock condition check failed
+[2026-09-12T12:11:14.384717+00:00] Placement denied for plant 4 at (148, 45): unlock condition check failed
+[2026-09-12T12:11:14.384747+00:00] Placement denied for plant 4 at (7, 146): unlock condition check failed
+[2026-09-12T12:11:14.384754+00:00] Placement denied for plant 4 at (2, 142): unlock condition check failed
+[2026-09-12T12:11:14.509139+00:00] Placement denied for plant 4 at (148, 37): unlock condition check failed
+[2026-09-12T12:11:14.509387+00:00] Placement denied for plant 4 at (94, 8): unlock condition check failed
+[2026-09-12T12:11:14.509397+00:00] Placement denied for plant 4 at (147, 43): unlock condition check failed
+[2026-09-12T12:11:14.754054+00:00] Placement denied for plant 12 at (142, 104): plant already occupies cell
+[2026-09-12T12:11:15.013765+00:00] Placement denied for plant 17 at (94, 7): plant already occupies cell
+[2026-09-12T12:11:15.146954+00:00] Placement denied for plant 17 at (4, 147): plant already occupies cell
+[2026-09-12T12:11:15.275745+00:00] Placement denied for plant 12 at (93, 10): plant already occupies cell
+[2026-09-12T12:11:15.407790+00:00] Placement denied for plant 17 at (62, 10): plant already occupies cell
+[2026-09-12T12:11:15.542927+00:00] Placement denied for plant 12 at (101, 19): plant already occupies cell
+[2026-09-12T12:11:15.542952+00:00] Placement denied for plant 12 at (91, 11): plant already occupies cell
+[2026-09-12T12:11:15.807542+00:00] Placement denied for plant 11 at (74, 142): plant already occupies cell
+[2026-09-12T12:11:15.807570+00:00] Placement denied for plant 4 at (140, 146): plant already occupies cell
+[2026-09-12T12:11:15.807576+00:00] Placement denied for plant 4 at (95, 131): plant already occupies cell
+[2026-09-12T12:11:15.807580+00:00] Placement denied for plant 4 at (50, 116): plant already occupies cell
+[2026-09-12T12:11:15.807583+00:00] Placement denied for plant 12 at (45, 146): plant already occupies cell
+[2026-09-12T12:11:15.807586+00:00] Placement denied for plant 12 at (118, 142): plant already occupies cell
+[2026-09-12T12:11:15.807589+00:00] Placement denied for plant 12 at (0, 131): plant already occupies cell
+[2026-09-12T12:11:15.807592+00:00] Placement denied for plant 2 at (48, 141): plant already occupies cell
+[2026-09-12T12:11:15.807595+00:00] Placement denied for plant 2 at (121, 137): plant already occupies cell
+[2026-09-12T12:11:15.807598+00:00] Placement denied for plant 2 at (3, 126): plant already occupies cell
+[2026-09-12T12:11:15.807601+00:00] Placement denied for plant 6 at (106, 125): plant already occupies cell
+[2026-09-12T12:11:15.807604+00:00] Placement denied for plant 6 at (61, 110): plant already occupies cell
+[2026-09-12T12:11:15.807607+00:00] Placement denied for plant 6 at (134, 106): plant already occupies cell
+[2026-09-12T12:11:15.807610+00:00] Placement denied for plant 17 at (31, 28): plant already occupies cell
+[2026-09-12T12:11:15.807613+00:00] Placement denied for plant 17 at (104, 24): plant already occupies cell
+[2026-09-12T12:11:15.807617+00:00] Placement denied for plant 17 at (132, 5): plant already occupies cell
+[2026-09-12T12:11:15.807620+00:00] Placement denied for plant 5 at (54, 4): plant already occupies cell
+[2026-09-12T12:11:15.807623+00:00] Placement denied for plant 5 at (127, 0): plant already occupies cell
+[2026-09-12T12:11:16.364543+00:00] Placement denied for plant 12 at (103, 20): plant already occupies cell
+[2026-09-12T12:11:16.506695+00:00] Placement denied for plant 12 at (145, 108): plant already occupies cell
+[2026-09-12T12:11:16.507075+00:00] Placement denied for plant 19 at (84, 58): plant already occupies cell
+[2026-09-12T12:11:16.790217+00:00] Placement denied for plant 17 at (10, 141): plant already occupies cell
+[2026-09-12T12:11:16.790461+00:00] Placement denied for plant 12 at (24, 26): plant already occupies cell
+[2026-09-12T12:11:17.947183+00:00] Placement denied for plant 4 at (58, 15): plant already occupies cell
+[2026-09-12T12:11:18.259171+00:00] Placement denied for plant 4 at (118, 123): plant already occupies cell
+[2026-09-12T12:11:18.425987+00:00] Placement denied for plant 4 at (101, 13): plant already occupies cell
+[2026-09-12T12:11:18.426156+00:00] Placement denied for plant 17 at (130, 77): plant already occupies cell
+[2026-09-12T12:11:18.770253+00:00] Placement denied for plant 17 at (76, 40): plant already occupies cell
+[2026-09-12T12:11:19.437875+00:00] Placement denied for plant 19 at (76, 30): plant already occupies cell
+[2026-09-12T12:11:19.577531+00:00] Placement denied for plant 19 at (17, 141): plant already occupies cell
+[2026-09-12T12:11:19.577555+00:00] Placement denied for plant 19 at (118, 118): plant already occupies cell
+[2026-09-12T12:11:20.106832+00:00] Placement denied for plant 19 at (112, 120): plant already occupies cell
+[2026-09-12T12:11:20.247771+00:00] Placement denied for plant 19 at (116, 130): plant already occupies cell
+[2026-09-12T12:11:20.591980+00:00] Placement denied for plant 19 at (68, 44): plant already occupies cell
+[2026-09-12T12:11:21.132546+00:00] Placement denied for plant 17 at (42, 61): plant already occupies cell
+[2026-09-12T12:11:21.275851+00:00] Placement denied for plant 17 at (130, 14): plant already occupies cell
+[2026-09-12T12:11:21.275875+00:00] Placement denied for plant 19 at (14, 138): plant already occupies cell
+[2026-09-12T12:11:21.505968+00:00] Placement denied for plant 19 at (8, 51): plant already occupies cell
+[2026-09-12T12:11:21.649135+00:00] Placement denied for plant 19 at (63, 19): plant already occupies cell
+[2026-09-12T12:11:21.880212+00:00] Placement denied for plant 4 at (62, 42): plant already occupies cell
+[2026-09-12T12:11:21.880236+00:00] Placement denied for plant 19 at (6, 63): plant already occupies cell
+[2026-09-12T12:11:22.406241+00:00] Placement denied for plant 19 at (10, 52): plant already occupies cell
+[2026-09-12T12:11:22.406272+00:00] Placement denied for plant 19 at (87, 58): unlock condition check failed
+[2026-09-12T12:11:22.406282+00:00] Placement denied for plant 19 at (24, 15): unlock condition check failed
+[2026-09-12T12:11:22.406285+00:00] Placement denied for plant 12 at (83, 4): plant already occupies cell
+[2026-09-12T12:11:22.627455+00:00] Placement denied for plant 19 at (55, 12): unlock condition check failed
+[2026-09-12T12:11:22.627481+00:00] Placement denied for plant 19 at (127, 14): unlock condition check failed
+[2026-09-12T12:11:22.627488+00:00] Placement denied for plant 19 at (109, 130): unlock condition check failed
+[2026-09-12T12:11:22.627621+00:00] Placement denied for plant 12 at (79, 28): plant already occupies cell
+[2026-09-12T12:11:22.781811+00:00] Placement denied for plant 19 at (35, 140): unlock condition check failed
+[2026-09-12T12:11:22.781840+00:00] Placement denied for plant 19 at (71, 31): unlock condition check failed
+[2026-09-12T12:11:23.014295+00:00] Placement denied for plant 12 at (63, 77): plant already occupies cell
+[2026-09-12T12:11:23.014320+00:00] Placement denied for plant 12 at (32, 25): plant already occupies cell
+[2026-09-12T12:11:23.014445+00:00] Placement denied for plant 19 at (10, 65): unlock condition check failed
+[2026-09-12T12:11:23.014452+00:00] Placement denied for plant 19 at (37, 141): unlock condition check failed
+[2026-09-12T12:11:23.174708+00:00] Placement denied for plant 19 at (52, 98): unlock condition check failed
+[2026-09-12T12:11:23.174734+00:00] Placement denied for plant 19 at (63, 45): unlock condition check failed
+[2026-09-12T12:11:23.370102+00:00] Placement denied for plant 12 at (41, 141): plant already occupies cell
+[2026-09-12T12:11:23.370125+00:00] Placement denied for plant 12 at (57, 126): plant already occupies cell
+[2026-09-12T12:11:23.370131+00:00] Placement denied for plant 12 at (32, 17): plant already occupies cell
+[2026-09-12T12:11:23.508841+00:00] Placement denied for plant 12 at (125, 55): plant already occupies cell
+[2026-09-12T12:11:23.508959+00:00] Placement denied for plant 12 at (107, 27): plant already occupies cell
+[2026-09-12T12:11:23.509037+00:00] Placement denied for plant 17 at (147, 27): plant already occupies cell
+[2026-09-12T12:11:23.725473+00:00] Placement denied for plant 12 at (101, 8): plant already occupies cell
+[2026-09-12T12:11:23.725497+00:00] Placement denied for plant 12 at (112, 44): plant already occupies cell
+[2026-09-12T12:11:23.725612+00:00] Placement denied for plant 17 at (29, 16): unlock condition check failed
+[2026-09-12T12:11:23.725616+00:00] Placement denied for plant 17 at (102, 12): plant already occupies cell
+[2026-09-12T12:11:23.851122+00:00] Placement denied for plant 17 at (82, 51): unlock condition check failed
+[2026-09-12T12:11:23.851152+00:00] Placement denied for plant 17 at (105, 28): unlock condition check failed
+[2026-09-12T12:11:24.070387+00:00] Placement denied for plant 12 at (72, 46): plant already occupies cell
+[2026-09-12T12:11:24.070505+00:00] Placement denied for plant 12 at (127, 48): plant already occupies cell
+[2026-09-12T12:11:24.070517+00:00] Placement denied for plant 17 at (129, 88): unlock condition check failed
+[2026-09-12T12:11:24.070524+00:00] Placement denied for plant 17 at (94, 26): unlock condition check failed
+[2026-09-12T12:11:24.207792+00:00] Placement denied for plant 12 at (64, 94): plant already occupies cell
+[2026-09-12T12:11:24.207817+00:00] Placement denied for plant 12 at (29, 32): plant already occupies cell
+[2026-09-12T12:11:24.207821+00:00] Placement denied for plant 12 at (110, 48): plant already occupies cell
+[2026-09-12T12:11:24.207832+00:00] Placement denied for plant 17 at (35, 137): unlock condition check failed
+[2026-09-12T12:11:24.207839+00:00] Placement denied for plant 17 at (127, 45): unlock condition check failed
+[2026-09-12T12:11:24.387050+00:00] Placement denied for plant 4 at (122, 78): plant already occupies cell
+[2026-09-12T12:11:24.387115+00:00] Placement denied for plant 12 at (8, 77): plant already occupies cell
+[2026-09-12T12:11:24.387120+00:00] Placement denied for plant 12 at (92, 20): plant already occupies cell
+[2026-09-12T12:11:24.387123+00:00] Placement denied for plant 12 at (96, 30): plant already occupies cell
+[2026-09-12T12:11:24.387127+00:00] Placement denied for plant 17 at (142, 2): plant already occupies cell
+[2026-09-12T12:11:24.387136+00:00] Placement denied for plant 17 at (23, 141): unlock condition check failed
+[2026-09-12T12:11:24.510259+00:00] Placement denied for plant 4 at (116, 59): plant already occupies cell
+[2026-09-12T12:11:24.510500+00:00] Placement denied for plant 12 at (65, 46): plant already occupies cell
+[2026-09-12T12:11:24.510628+00:00] Placement denied for plant 17 at (124, 118): unlock condition check failed
+[2026-09-12T12:11:24.510635+00:00] Placement denied for plant 17 at (21, 64): unlock condition check failed
+[2026-09-12T12:11:24.699084+00:00] Placement denied for plant 12 at (32, 19): plant already occupies cell
+[2026-09-12T12:11:24.699109+00:00] Placement denied for plant 12 at (109, 25): plant already occupies cell
+[2026-09-12T12:11:24.699113+00:00] Placement denied for plant 12 at (107, 126): plant already occupies cell
+[2026-09-12T12:11:24.699124+00:00] Placement denied for plant 17 at (81, 36): unlock condition check failed
+[2026-09-12T12:11:24.699130+00:00] Placement denied for plant 17 at (80, 42): unlock condition check failed
+[2026-09-12T12:11:24.815226+00:00] Placement denied for plant 12 at (91, 23): plant already occupies cell
+[2026-09-12T12:11:24.815250+00:00] Placement denied for plant 12 at (58, 127): plant already occupies cell
+[2026-09-12T12:11:24.815254+00:00] Placement denied for plant 12 at (33, 18): plant already occupies cell
+[2026-09-12T12:11:24.815264+00:00] Placement denied for plant 17 at (103, 32): unlock condition check failed
+[2026-09-12T12:11:24.815271+00:00] Placement denied for plant 17 at (70, 47): unlock condition check failed
+[2026-09-12T12:11:25.022008+00:00] Placement denied for plant 12 at (127, 50): plant already occupies cell
+[2026-09-12T12:11:25.022034+00:00] Placement denied for plant 12 at (82, 35): plant already occupies cell
+[2026-09-12T12:11:25.022177+00:00] Placement denied for plant 17 at (23, 146): unlock condition check failed
+[2026-09-12T12:11:25.022185+00:00] Placement denied for plant 17 at (124, 123): unlock condition check failed
+[2026-09-12T12:11:25.162487+00:00] Placement denied for plant 12 at (124, 115): plant already occupies cell
+[2026-09-12T12:11:25.162511+00:00] Placement denied for plant 12 at (53, 52): plant already occupies cell
+[2026-09-12T12:11:25.162612+00:00] Placement denied for plant 17 at (124, 60): unlock condition check failed
+[2026-09-12T12:11:25.162620+00:00] Placement denied for plant 17 at (79, 45): unlock condition check failed
+[2026-09-12T12:11:25.332891+00:00] Placement denied for plant 3 at (124, 43): unlock condition check failed
+[2026-09-12T12:11:25.332924+00:00] Placement denied for plant 3 at (33, 19): unlock condition check failed
+[2026-09-12T12:11:25.332931+00:00] Placement denied for plant 3 at (125, 16): unlock condition check failed
+[2026-09-12T12:11:25.333519+00:00] Placement denied for plant 4 at (21, 32): plant already occupies cell
+[2026-09-12T12:11:25.333606+00:00] Placement denied for plant 12 at (122, 43): plant already occupies cell
+[2026-09-12T12:11:25.448694+00:00] Placement denied for plant 3 at (111, 142): unlock condition check failed
+[2026-09-12T12:11:25.448726+00:00] Placement denied for plant 3 at (136, 86): unlock condition check failed
+[2026-09-12T12:11:25.448733+00:00] Placement denied for plant 3 at (134, 98): unlock condition check failed
+[2026-09-12T12:11:25.449396+00:00] Placement denied for plant 12 at (65, 92): plant already occupies cell
+[2026-09-12T12:11:25.449403+00:00] Placement denied for plant 12 at (108, 30): plant already occupies cell
+[2026-09-12T12:11:25.595876+00:00] Placement denied for plant 3 at (126, 57): unlock condition check failed
+[2026-09-12T12:11:25.595907+00:00] Placement denied for plant 3 at (81, 42): unlock condition check failed
+[2026-09-12T12:11:25.595914+00:00] Placement denied for plant 3 at (89, 62): unlock condition check failed
+[2026-09-12T12:11:25.596648+00:00] Placement denied for plant 12 at (122, 129): plant already occupies cell
+[2026-09-12T12:11:25.596654+00:00] Placement denied for plant 12 at (19, 75): plant already occupies cell
+[2026-09-12T12:11:25.722761+00:00] Placement denied for plant 3 at (108, 29): unlock condition check failed
+[2026-09-12T12:11:25.722812+00:00] Placement denied for plant 3 at (64, 97): unlock condition check failed
+[2026-09-12T12:11:25.722823+00:00] Placement denied for plant 3 at (30, 29): unlock condition check failed
+[2026-09-12T12:11:25.723529+00:00] Placement denied for plant 12 at (105, 32): plant already occupies cell
+[2026-09-12T12:11:25.723534+00:00] Placement denied for plant 12 at (134, 96): plant already occupies cell
+[2026-09-12T12:11:25.890341+00:00] Placement denied for plant 3 at (124, 14): unlock condition check failed
+[2026-09-12T12:11:25.890374+00:00] Placement denied for plant 3 at (33, 24): unlock condition check failed
+[2026-09-12T12:11:25.890383+00:00] Placement denied for plant 3 at (122, 60): unlock condition check failed
+[2026-09-12T12:11:25.891039+00:00] Placement denied for plant 12 at (87, 17): plant already occupies cell
+[2026-09-12T12:11:26.020840+00:00] Placement denied for plant 3 at (136, 112): unlock condition check failed
+[2026-09-12T12:11:26.020880+00:00] Placement denied for plant 3 at (84, 16): unlock condition check failed
+[2026-09-12T12:11:26.020887+00:00] Placement denied for plant 3 at (49, 98): unlock condition check failed
+[2026-09-12T12:11:26.021641+00:00] Placement denied for plant 12 at (21, 18): plant already occupies cell
+[2026-09-12T12:11:26.021649+00:00] Placement denied for plant 12 at (107, 127): plant already occupies cell
+[2026-09-12T12:11:26.168502+00:00] Placement denied for plant 3 at (77, 24): unlock condition check failed
+[2026-09-12T12:11:26.168537+00:00] Placement denied for plant 3 at (119, 112): unlock condition check failed
+[2026-09-12T12:11:26.168544+00:00] Placement denied for plant 3 at (122, 128): unlock condition check failed
+[2026-09-12T12:11:26.169009+00:00] Placement denied for plant 12 at (71, 29): plant already occupies cell
+[2026-09-12T12:11:26.257400+00:00] PlantSim simulation completed
+[2026-09-12T12:11:26.267418+00:00] PlantSim scoring started
+[2026-09-12T12:11:26.278853+00:00] PlantSim evaluation completed with score 0.245662
+[2026-09-12T12:11:26.302306+00:00] Setting score to 245661742
+[2026-09-12T12:11:26.302657+00:00] PlantSim statistics: {'score': 0.24566174224150424, 'main_score': 0.24237256669076915, 'longevity_score': 0.02881844444444445, 'entropy': 0.2981456864327979, 'total_plants_planted_C': 18291, 'unlocked_plant_types': np.int64(10), 'density_factor': 0.8129333333333333, 'number_of_plant_species_in_the_game': 31, 'c_max_or_grid_size': 22500, 'plant_counts': array([5.5700e+02, 3.3000e+01, 0.0000e+00, 6.7700e+02, 5.7300e+02,
+       4.2000e+01, 0.0000e+00, 0.0000e+00, 2.4000e+01, 0.0000e+00,
+       8.0000e+00, 1.2581e+04, 0.0000e+00, 0.0000e+00, 0.0000e+00,
+       0.0000e+00, 3.6600e+02, 0.0000e+00, 3.4300e+03, 0.0000e+00,
+       0.0000e+00, 0.0000e+00, 0.0000e+00, 0.0000e+00, 0.0000e+00,
+       0.0000e+00, 0.0000e+00, 0.0000e+00, 0.0000e+00, 0.0000e+00,
+       0.0000e+00])}
+[2026-09-12T12:11:26.302663+00:00] Evaluation completed successfully
